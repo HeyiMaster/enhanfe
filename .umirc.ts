@@ -13,8 +13,8 @@ export default defineConfig({
     '@': './src',
   },
   locales: [
-    ['zh-CN', '中文'],
-    ['en-US', 'English'],
+    // ['zh-CN', '中文'],
+    // ['en-US', 'English'],
   ],
   navs: [
     null,
