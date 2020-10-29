@@ -23,6 +23,6 @@ export default defineConfig({
       path: 'https://github.com/HeyiMaster/enhanfe',
     },
   ],
-  ssr: {},
-  exportStatic: {},
+  // ssr: {},
+  // exportStatic: {},
 });
