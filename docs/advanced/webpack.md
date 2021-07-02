@@ -1,7 +1,7 @@
 ---
 nav:
-  title: 进阶
-order:  1
+  title: 🔥 进阶
+order: 1
 title: Tapable 与 Webpack 浅析
 ---
 
@@ -1340,10 +1340,13 @@ module.exports = {
   },
 };
 ```
+
 这样，在项目下执行 `yarn start`， 或 `npx webpack` 就可以输出处理后的文件，文件内容为：
+
 ```js
 console.log('合一欢迎你!');
 ```
+
 由此可见，哪怕是复杂 loader 的定义，也是对输入的源码 source 字符串进行处理，而后生成新的内容返回。
 
 至此，webpack 可见一斑。
