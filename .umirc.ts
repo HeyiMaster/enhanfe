@@ -23,6 +23,8 @@ export default defineConfig({
       path: 'https://github.com/HeyiMaster/enhanfe',
     },
   ],
-  // ssr: {},
-  // exportStatic: {},
+  ssr: {},
+  exportStatic: {},
+  base: process.env.NODE_ENV === 'production' ? '/enhanfe/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/enhanfe/' : '/',
 });
