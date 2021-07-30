@@ -1,7 +1,7 @@
 ---
-nav:
-  title: 🏦 数据结构与算法
-title: 数组排序
+# nav:
+#   title: 数据结构与算法
+title: 排序
 order: 2
 ---
 
@@ -33,125 +33,181 @@ order: 2
 ### 冒泡排序
 
 ```js
-var sortArray = function(nums) {
-  const numsLen = nums.length;
-  for (let i = 0; i < numsLen; i++) {
-    for (let j = 0; j < numsLen; j++) {
-      if (nums[i] < nums[j]) {
-        const temp = nums[i];
-        nums[i] = nums[j];
-        nums[j] = temp;
+function bubbleSort<E>(datas: E[]) {
+  for (let i = 0, len = datas.length; i < len - 1; i++) {
+    for (let j = 0; j < len - 1 - i; j++) {
+      if (datas[j] < datas[j + 1]) {
+        const temp = datas[j];
+        datas[j] = datas[j + 1];
+        datas[j + 1] = temp;
       }
     }
   }
-  return nums;
-};
+  return datas;
+}
+
+console.log(bubbleSort < number > [2, 9, 3, 4, 5, 1]);
 ```
 
 ### 选择排序
 
 ```js
-var sortArray = function(nums) {
-  for (let i = 0; i < nums.length; i++) {
-    let min = Infinity;
-    let minIndex;
-    for (j = i; j < nums.length; j++) {
-      if (nums[j] < min) {
-        min = nums[j];
+function selectionSort<E>(datas: E[]) {
+  for (let i = 0, len = datas.length; i < len; i++) {
+    let minIndex = i;
+    for (let j = i; j < len; j++) {
+      if (datas[j] < datas[minIndex]) {
         minIndex = j;
       }
     }
-    const temp = nums[i];
-    nums[i] = nums[minIndex];
-    nums[minIndex] = temp;
+    const temp = datas[i];
+    datas[i] = datas[minIndex];
+    datas[minIndex] = temp;
   }
-  return nums;
-};
+  return datas;
+}
+
+console.log(selectionSort < number > [2, 9, 3, 4, 5, 1]);
 ```
 
 ### 插入排序
 
 ```js
-var sortArray = function(nums) {
-  for (let i = 1; i < nums.length; i++) {
-    let temp = nums[i];
-    let j = i - 1;
-    for (; j >= 0; j--) {
-      if (temp >= nums[j]) break;
-      nums[j + 1] = nums[j];
+function insertionSort<E>(datas: E[]) {
+  for (let i = 0, len = datas.length; i < len; i++) {
+    const temp = datas[i];
+    let j = i;
+    while (j > 0) {
+      if (datas[j - 1] > temp) {
+        datas[j] = datas[j - 1];
+      } else {
+        break;
+      }
+      j--;
     }
-    nums[j + 1] = temp;
+    datas[j] = temp;
   }
-  return nums;
-};
-```
-
-### 快速排序
-
-```js
-var sortArray = function(nums) {
-  if (nums.length < 2) return nums;
-  return quickSort(nums, 0, nums.length - 1);
-};
-
-function quickSort(nums, left, right) {
-  if (left >= right) return;
-  let pivotIndex = partition(nums, left, right);
-  quickSort(nums, left, pivotIndex - 1);
-  quickSort(nums, pivotIndex + 1, right);
-  return nums;
+  return datas;
 }
 
-function partition(nums, left, right) {
-  let pivot = right;
-  let leftIndex = left;
-  for (let i = left; i < right; i++) {
-    if (nums[i] < nums[pivot]) {
-      [nums[leftIndex], nums[i]] = [nums[i], nums[leftIndex]];
-      leftIndex++;
-    }
-  }
-  [nums[leftIndex], nums[pivot]] = [nums[pivot], nums[leftIndex]];
-  return leftIndex;
-}
+console.log(insertionSort < number > [2, 9, 3, 4, 5, 1]);
 ```
 
 ### 归并排序
 
 ```js
-var sortArray = function(nums) {
-  return mergeSort(nums, 0, nums.length - 1);
-};
+function mergeSort<E>(datas: E[]) {
+  const rec = (arr: E[]) => {
+    // if arr is empty, return empty array
+    if (!arr.length) return [];
+    if (arr.length === 1) return arr;
+    // calculate middle index
+    const mid = Math.floor(arr.length / 2);
+    // left arr
+    const leftArr = arr.slice(0, mid);
+    // right arr
+    const rightArr = arr.slice(mid);
 
-function mergeSort(nums, left, right) {
-  if (left >= right) return nums;
-  let mid = (left + right) >> 1;
-  mergeSort(nums, left, mid);
-  mergeSort(nums, mid + 1, right);
-  return merge(nums, left, mid, right);
+    const recLeftArr: E[] = rec(leftArr);
+    const recRightArr: E[] = rec(rightArr);
+
+    const res: E[] = [];
+
+    while (recLeftArr?.length || recRightArr?.length) {
+      if (recLeftArr?.length && recRightArr?.length) {
+        res.push(
+          recLeftArr[0] < recRightArr[0]
+            ? (recLeftArr.shift() as E)
+            : (recRightArr.shift() as E),
+        );
+      } else if (recLeftArr?.length) {
+        res.push(recLeftArr.shift() as E);
+      } else if (recRightArr?.length) {
+        res.push(recRightArr.shift() as E);
+      }
+    }
+
+    return res;
+
+  };
 }
 
-function merge(nums, left, mid, right) {
-  let ans = [];
-  let c = 0,
-    i = left,
-    j = mid + 1;
-  while (i <= mid && j <= right) {
-    if (nums[i] < nums[j]) {
-      ans[c++] = nums[i++];
+console.log(
+  mergeSort<number>([2, 9, 3, 4, 5, 1]),
+);
+
+```
+
+### 快速排序
+
+```js
+function quickSort<E>(datas: E[]) {
+  const rec: (ars: E[]) => E[] = (ars: E[]) => {
+    if (ars.length <= 1) return ars;
+    const left = [];
+    const right = [];
+    const mid = ars[0];
+    for (let i = 1; i < ars.length; i++) {
+      const elem = ars[i];
+      if (elem > mid) {
+        left.push(elem);
+      } else {
+        right.push(elem);
+      }
+    }
+    return [...rec(left), mid, ...rec(right)];
+  };
+  return rec(datas);
+}
+
+console.log(quickSort < number > [2, 9, 3, 4, 5, 1]);
+```
+
+### 二分搜索
+
+**循环版本**
+
+```js
+// 二分搜索的前提是数组从小到大已排序
+
+function binarySearch<E>(arr: E[], item: E) {
+  let low = 0;
+  let high = arr.length - 1;
+  while (low <= high) {
+    const midIndex = Math.floor((low + high) / 2);
+    const ele = arr[midIndex];
+    if (ele < item) {
+      low = midIndex + 1;
+    } else if (ele > item) {
+      high = midIndex - 1;
     } else {
-      ans[c++] = nums[j++];
+      return midIndex;
     }
   }
-  while (i <= mid) {
-    ans[c++] = nums[i++];
-  }
-  while (j <= right) {
-    ans[c++] = nums[j++];
-  }
-  for (let i = 0; i < ans.length; i++) {
-    nums[i + left] = ans[i];
-  }
-  return nums;
+  return -1;
 }
+
+console.log(binarySearch([1, 2, 3], 2));
+```
+
+**递归版本**
+
+```js
+function binarySearchRec(arr, item) {
+  const rec = (low, high) => {
+    if (low > high) return;
+    const mid = Math.floor((low + high) / 2);
+    const ele = arr[mid];
+    if (item > ele) {
+      return rec(mid + 1, high);
+    } else if (item < ele) {
+      return rec(low, mid - 1);
+    } else {
+      return mid;
+    }
+  };
+  return rec(0, arr.length - 1);
+}
+
+console.log(binarySearchRec(quickSort(data), 3));
 ```

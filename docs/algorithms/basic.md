@@ -1,6 +1,6 @@
 ---
 nav:
-  title: 数据结构与算法
+  title: 🏦 数据结构与算法
 title: 基础
 order: 1
 ---
@@ -310,3 +310,689 @@ function minWindow(s, t) {
 
 console.log(minWindow('ADOBECODEBANC', 'ABC'));
 ```
+
+## 树
+
+树通常用来表征结构化具有层级特征的数据，例如公司组织架构，中国省市区县层级划分等数据均可使用树这一数据结构呈现与存储。
+
+以省市区县为例，可以用树这样来表示：
+
+```
+湖北省
+	|
+	|--武汉市
+	|		 |
+	|    |--洪山区
+	|
+	|
+	|--黄冈市
+```
+
+在 JavaScript 语言中，表示树可以有几种形式
+
+1. 将树中同一层级树节点存储在数组中
+2. 通过指针连接各节点
+
+形式一我们可以像如下进行表示：
+
+```js
+const provinces = [
+  {
+    name: '湖北省',
+    children: [
+      {
+        name: '武汉市',
+        children: [
+          {
+            name: '洪山区',
+          },
+        ],
+      },
+      {
+        name: '黄冈市',
+      },
+    ],
+  },
+];
+```
+
+这种形式可以轻易表示多叉树。
+
+形式二我们可以像如下进行表示：
+
+```js
+const data = {
+  value: 0,
+  left: {
+    value: 1,
+    left: {
+      value: 3,
+    },
+  },
+  right: {
+    value: 2,
+  },
+};
+```
+
+通过这种形式，可以轻易表示二叉树。
+
+### 基础算法
+
+基础算法包括树的遍历，这里介绍树的层级遍历、深度优先遍历。
+
+#### 多叉树
+
+**层级遍历**
+
+层级遍历通常用来遍历多叉树，遍历过程可借助队列这一数据结构实现，代码如下：
+
+```js
+function traverse(tree) {
+  const stack = [];
+  stack.push(tree);
+  while (stack.length) {
+    const current = stack.shift();
+    console.log(current.value);
+    if (current.children)
+      current.children.forEach(te => {
+        stack.push(te);
+      });
+  }
+}
+
+const treeData = {
+  value: 0,
+  children: [
+    {
+      value: 1,
+      children: [
+        {
+          value: 3,
+        },
+        {
+          value: 4,
+        },
+      ],
+    },
+    {
+      value: 2,
+    },
+  ],
+};
+
+traverse(treeData);
+// 代码输出：0 1 2 3 4
+```
+
+**深度遍历**
+
+深度遍历我们首先能想到通过递归实现，因为递归本身就是基于函数栈这一原理实现。同时我们还可以通过栈这一数据结构，完成树的深度遍历。
+
+- 递归实现
+
+```js
+function traverse(tree) {
+  console.log(tree);
+  if (tree.children) {
+    tree.children.forEach(traverse1);
+  }
+}
+
+const treeData = {
+  value: 0,
+  children: [
+    {
+      value: 1,
+      children: [
+        {
+          value: 3,
+        },
+        {
+          value: 4,
+        },
+      ],
+    },
+    {
+      value: 2,
+    },
+  ],
+};
+
+traverse(treeData);
+```
+
+#### 二叉树
+
+二叉树的遍历也可分为层级遍历、前序遍历、中序遍历、后序遍历。此处前中后序表示访问根节点的时机，例如前序遍历表示先访问根节点，然后访问左子树，最后访问右子树。
+
+**递归实现前中后序遍历**
+
+```js
+// 前序遍历
+function preTraverse(tree) {
+  if (!tree) return;
+  console.log(tree.value);
+  preTraverse(tree.left);
+  preTraverse(tree.right);
+}
+
+// 中序遍历
+function inTraverse(tree) {
+  if (!tree) return;
+  inTraverse(tree.left);
+  console.log(tree.value);
+  inTraverse(tree.right);
+}
+
+// 后序遍历
+function postTraverse(tree) {
+  if (!tree) return;
+  postTraverse(tree.left);
+  postTraverse(tree.right);
+  console.log(tree.value);
+}
+```
+
+**非递归实现前中后序遍历**
+
+```js
+// 前序遍历
+function preTraverseStack(root) {
+  const res = [];
+  const stack = [];
+  if (root) stack.push(root);
+  while (stack.length) {
+    const n = stack.pop();
+    res.push(n.value);
+    const { left, right } = n;
+    if (right) stack.push(right);
+    if (left) stack.push(left);
+  }
+  return res;
+}
+
+// 中序遍历
+function inTraverseStack(tree) {
+  // 首先不断压栈到最左边子树
+  let p = tree;
+  const arr = [];
+  const res = [];
+  while (p || arr.length !== 0) {
+    if (p) {
+      // 如果 p 存在，则一直进行压栈
+      arr.push(p);
+      p = p.left;
+    } else {
+      // 当当前节点没有左子树时，则出栈
+      let node = arr.pop();
+      // 访问节点
+      res.push(node.value);
+      p = node.right;
+    }
+  }
+  return res;
+}
+
+// 后序遍历
+function postTraverseStack(tree) {
+  const arr = [tree];
+  const res = [];
+  while (arr.length !== 0) {
+    let node = arr.pop();
+    res.push(node.value);
+    if (node.left) arr.push(node.left);
+    if (node.right) arr.push(node.right);
+  }
+  return res.reverse();
+}
+```
+
+### 经典题
+
+**求二叉树的最大深度**
+
+例如考察二叉树的最大深度，则是在树的深度遍历基础上进行改进。示例如下
+
+```js
+function maxDepth(root) {
+  let res = 0;
+  const dfs = (r, l) => {
+    if (!r) return;
+    res = Math.max(res, l);
+    dfs(r.left, l + 1);
+    dfs(r.right, l + 1);
+  };
+  dfs(root, 1);
+
+  return res;
+}
+
+const data = {
+  value: 1,
+  left: {
+    value: 2,
+    left: {
+      value: 3,
+    },
+  },
+  right: {
+    value: 4,
+  },
+};
+
+console.log(maxDepth(data));
+```
+
+通过这个考题联想到另外一个，找出二叉树的所有路径。
+
+```js
+function getTreeGraph(root) {
+  const paths = [];
+
+  const dfs = (r, path, p) => {
+    if (!r) {
+      // 其中 !p.left && !p.right 表示当前节点为叶子节点
+      if (!p.left && !p.right && !paths.includes(path)) {
+        paths.push(path);
+      }
+      return;
+    }
+    const { left: rLeft, right: rRight } = r;
+    dfs(rLeft, `${path}${rLeft?.value ? `-${rLeft?.value}` : ''}`, r);
+    dfs(rRight, `${path}${rRight?.value ? `-${rRight?.value}` : ''}`, r);
+  };
+  dfs(root, root.value, null);
+
+  return paths;
+}
+
+const data = {
+  value: 1,
+  left: {
+    value: 2,
+    left: {
+      value: 3,
+    },
+  },
+  right: {
+    value: 4,
+  },
+};
+
+console.log(getTreeGraph(data));
+// 输出：[ '1-2-3', '1-4' ]
+```
+
+**将二叉树节点存储到数组中**
+
+有两种方法，代码实现如下：
+
+```js
+function levelOrder(root) {
+  if (!root) return [];
+  const nodes = [[root, 0]];
+  const result = [];
+  while (nodes.length) {
+    const [n, l] = nodes.shift();
+    if (result[l]) {
+      result[l].push(n.value);
+    } else {
+      result[l] = [n.value];
+    }
+    if (n.left) nodes.push([n.left, l + 1]);
+    if (n.right) nodes.push([n.right, l + 1]);
+  }
+  return result;
+}
+```
+
+或者
+
+```js
+function levelOrder(root) {
+  if (!root) return [];
+  const q = [root];
+  const result = [];
+  while (q.length) {
+    let len = q.length;
+    result.push([]);
+    while (len--) {
+      const n = q.shift();
+      result[result.length - 1].push(n.value);
+      if (n.left) q.push(n.left);
+      if (n.right) q.push(n.right);
+    }
+  }
+  return result;
+}
+```
+
+测试如下
+
+```js
+const data = {
+  value: 1,
+  left: {
+    value: 2,
+    left: {
+      value: 3,
+    },
+  },
+  right: {
+    value: 4,
+  },
+};
+
+console.log(levelOrder(data));
+
+// 输出树层级
+/**
+ * [
+ *    [1],
+ *    [2, 4],
+ *    [3]
+ * ]
+ */
+```
+
+## 图
+
+通常使用**邻接矩阵**、**邻接表**或**关联矩阵**表示图的节点与边信息。
+
+**邻接矩阵：**
+
+```
+	A B C D
+A 0 1 0 0
+B 1 0 1 0
+C 0 1 0 0
+D 0 0 0 0
+```
+
+**邻接表：**
+
+```
+{
+	0: [1, 2],
+	1: [2, 3],
+	2: [3],
+	3: [1]
+}
+```
+
+通常，我们倾向使用邻接表表征图。
+
+### 基础算法
+
+**图的深度优先遍历**
+
+给定邻接表表示图：
+
+```js
+const graph = {
+  0: [1, 2],
+  1: [2],
+  2: [0, 3],
+  3: [3],
+};
+```
+
+通过深度优先遍历方式，遍历该图。
+
+```js
+function graphDepthVisit(g, n) {
+  const visited = new Set();
+
+  function dfs(n) {
+    console.log(n);
+    visited.add(n);
+    g[n].forEach(e => {
+      if (!visited.has(e)) {
+        dfs(e);
+      }
+    });
+  }
+  dfs(n);
+}
+
+graphDepthVisit(graph, 1);
+
+// 1 2 0 3
+```
+
+**图的广度优先遍历**
+
+```js
+function graphBreadthVisit(g, n) {
+  const q = [n];
+  const visited = new Set(q);
+  while (q.length) {
+    const c = q.shift();
+    console.log(c);
+    g[c].forEach(e => {
+      if (!visited.has(e)) {
+        q.push(e);
+        visited.add(e);
+      }
+    });
+  }
+}
+
+graphBreadthVisit(graph, 2);
+
+// 2 0 3 1
+```
+
+## 堆
+
+堆本质是树，是完全二叉树。堆可以分为最小堆、最大堆。
+
+- 最小堆：每个根节点值都小于其子节点值
+- 最大堆：每个根节点值都大于其子节点值
+
+在 JavaScript 中，可以使用数组来存储堆。
+
+```
+.
+          1(0)
+
+       3(1)   6(2)
+
+	5(3)  9(4)   8(5)
+```
+
+存储如：[1, 3, 6, 5, 9, 8]
+
+存储有以下特点：
+
+- 左侧子节点在数组中存储位置是 2 \* index + 1;
+- 右侧子节点在数组中存储位置是 2 \* index + 2;
+- 父节点在数组中存储位置是 (index - 1) / 2；
+
+**主要应用**
+
+1. 堆能高效、快速地找到最大（小）值，时间复杂度为 o(1)
+2. 找出第 K 个最大（小）元素
+
+### 基础算法
+
+构建最小堆，完成元素插入、删除。有两个核心算法需要注意：
+
+1. 插入时，插入值不断上移，直至满足堆条件
+2. 删除时，先将堆尾元素填补在堆首，然后不断下移，直至满足堆条件
+
+构建一个最小堆，代码如下：
+
+```js
+class MinHeap < E > {
+    /**
+     * Storage heap data
+     */
+    private heap: E[];
+
+    constructor() {
+        this.heap = [];
+    }
+
+    /**
+     * get current superior element index
+     * @param index
+     * @returns
+     */
+    private getSuperiorIndex(index: number) {
+        return (index - 1) >> 1;
+    }
+
+    /**
+     * get current subordinate index
+     * @param index
+     * @returns
+     */
+    private getSubordinateIndexs(index: number) {
+        return [index * 2 + 1, index * 2 + 2];
+    }
+
+    /**
+     * swap
+     * @param i1
+     * @param i2
+     */
+    private swap(i1: number, i2: number) {
+        const temp = this.heap[i1];
+        this.heap[i1] = this.heap[i2];
+        this.heap[i2] = temp;
+    }
+
+    /**
+     * Move element up
+     * @param index
+     */
+    private moveUp(index: number) {
+        if (index === 0) return;
+        const superiorIndex = this.getSuperiorIndex(index);
+        if (this.heap[superiorIndex] > this.heap[index]) {
+            this.swap(superiorIndex, index);
+            this.moveUp(superiorIndex);
+        }
+    }
+
+    /**
+     * Move element down
+     * @param index
+     */
+    private moveDown(index: number) {
+        const subIndexs = this.getSubordinateIndexs(index);
+        subIndexs.forEach(subIndex => {
+            if (this.heap[subIndex] < this.heap[index]) {
+                this.swap(subIndex, index);
+                this.moveDown(subIndex);
+            }
+        });
+    }
+
+    /**
+     * Insert data into heap
+     * @param value
+     */
+    insert(value: E) {
+        this.heap.push(value);
+        // Adjust data location
+        this.moveUp(this.heap.length - 1);
+    }
+
+    /**
+     * Pop up top element
+     */
+    pop() {
+        if (!this.size()) return;
+        this.heap[0] = this.heap.pop() as E;
+        this.moveDown(0);
+    }
+
+    /**
+     * peek heap
+     * @returns E
+     */
+    peek() {
+        return this.heap[0];
+    }
+
+    /**
+     * return heap size
+     * @returns number
+     */
+    size() {
+        return this.heap.length;
+    }
+}
+
+const minHeap = new MinHeap < number > ();
+minHeap.insert(3);
+minHeap.insert(2);
+minHeap.insert(1);
+minHeap.pop()
+```
+
+### 经典题
+
+**返回给定数组第 K 大元素**
+
+```js
+// 使用最小堆
+const minHeap = new MinHeap();
+// 给定数据
+const data = [3, 2, 1, 5, 6, 4];
+// k = 2，第2大元素
+data.forEach(d => {
+  minHeap.insert(d);
+  if (minHeap.size() > 2) {
+    minHeap.pop();
+  }
+});
+
+minHeap.peek();
+```
+
+**数组中前 K 个高频元素**
+
+给定 [1, 2, 1, 1, 2, 3]及 k=2，返回[1, 2]
+
+此题通过 map 与最小堆辅助完成。
+
+```js
+function topFrequent(nums, k) {
+  const minHeap = new MinHeap();
+  const map = new Map();
+  nums.forEach(d => {
+    map.set(d, map.get(d) ? map.get(d) + 1 : 1);
+  });
+  map.forEach((value, key) => {
+    minHeap.insert({
+      value,
+      key,
+    });
+    if (minHeap.size() > k) {
+      minHeap.pop();
+    }
+  });
+  return minHeap.heap.map(h => h.key);
+}
+
+console.log(topFrequent([2, 2, 1, 1, 1, 4, 3], 2));
+```
+
+此处 MinHeap 在上移和下移操作中做了细微调整，如下：
+
+```js
+this.heap[superiorIndex] &&
+  this.heap[superiorIndex].value > this.heap[index].value;
+```
+
+以及
+
+```js
+this.heap[subIndex] && this.heap[subIndex].value < this.heap[index].value;
+```
+
+**合并 K 个排序链表**

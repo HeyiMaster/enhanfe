@@ -1,6 +1,6 @@
 ---
-nav:
-  title: 数据结构与算法
+# nav:
+#   title: 数据结构与算法
 title: 每日 LeetCode
 order: 99
 ---
